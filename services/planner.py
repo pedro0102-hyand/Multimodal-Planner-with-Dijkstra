@@ -3,13 +3,16 @@ from algorithms.dijkstra import dijkstra
 def plan_trip(graph, start, end):
     distances, previous, transports = dijkstra(graph, start)
 
-    path = []
+    path = [] #lista de rotas
     current = end
-    transfers = 0
-    last_transport = None
+    transfers = 0 #contador de baldeacoes
+    last_transport = None #troca de modal
 
     while current:
+
+        #transporte usado para se chegar ao nó
         transport = transports[current]
+        #contagem de baldeacoes
         if transport and transport != last_transport:
             transfers += 1
             last_transport = transport
@@ -17,7 +20,7 @@ def plan_trip(graph, start, end):
         path.append((current.name, transport))
         current = previous[current]
 
-    path.reverse()
+    path.reverse() #reconstrucao da ordem do caminho
 
     return {
         "total_time": distances[end],
