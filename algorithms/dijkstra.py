@@ -9,7 +9,7 @@ def dijkstra(graph, start):
     distances[start] = 0
     queue = [(0, start)] #armazena o vértice inicial na fila de prioridade
 
-    while queue:
+    while queue: #enquanto houver caminhos nao explorados
 
         current_dist, current_node = heapq.heappop(queue) #melhor candidato
 
