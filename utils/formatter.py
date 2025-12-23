@@ -1,3 +1,5 @@
+
+
 def format_route(result):
     print("\n🗺️ Rota detalhada:\n")
     path = result["path"]
@@ -8,6 +10,10 @@ def format_route(result):
         print(f"{station}")
         print(f"  └─ {transport} → {next_station}")
 
-    print(f"\n⏱️ Tempo/Custo Total: {result['total_time']}")
+    # Verifica o critério para formatar a saída
+    label = "Tempo Total" if result.get("criterion") == "time" else "Custo Total"
+    unit = "min" if result.get("criterion") == "time" else "R$"
+    
+    print(f"\n⏱️ {label}: {result['total_time']} {unit}")
     print(f"🔄 Baldeações: {result['transfers']}")
 

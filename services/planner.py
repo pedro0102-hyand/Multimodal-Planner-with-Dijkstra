@@ -14,26 +14,20 @@ def plan_trip(graph, start, end, criterion="time"):
             transfers += 1
             last_transport = transport
 
-        # Armazena apenas dados simples para o formatador
         path.append((current.name, transport))
         current = previous[current]
 
     path.reverse()
 
-    # Cálculo do tempo total real percorrendo o grafo novamente 
-    # ou usando a distância se o critério for tempo
-    total_time = 0
+    total_cost = 0
     if distances[end] != float("inf"):
-        # Se o critério for tempo, a distância já é o tempo total
-        if criterion == "time":
-            total_time = distances[end]
-        else:
-            # Caso contrário, seria necessário reconstruir os objetos Edge 
-            # para somar. Por agora, retornamos o custo do critério.
-            total_time = "Calculado por " + criterion
+        # Se o critério for tempo, a distância é o tempo
+        # Se o critério for preço, a distância é o preço total acumulado
+        total_cost = distances[end]
 
     return {
-        "total_time": total_time,
+        "total_time": total_cost,
         "transfers": max(0, transfers - 1),
-        "path": path
+        "path": path,
+        "criterion": criterion # Adicionamos o critério para o formatador saber o que exibir
     }
