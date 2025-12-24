@@ -1,30 +1,34 @@
-from data.network_safe import build_safe_network
-from services.safe_planner import filter_secure_graph
+import math
+from data.network_reliable import build_reliable_network
 from services.planner import plan_trip
 from utils.formatter import format_route
 
 def main():
-    graph, start, end = build_safe_network()
+    graph, start, end = build_reliable_network()
     
-    print("--- Planeador de Caminhada Noturna Segura ---")
-    print(f"Trajeto: {start.name} -> {end.name}")
+    print("--- Planejador de Rotas Confiáveis ---")
+    print("(1) Rota Mais Rápida (Pode atrasar)")
+    print("(2) Rota Mais Confiável (Maior chance de pontualidade)")
     
-    try:
-        limite = int(input("\nDigite o nível mínimo de segurança desejado (1-10): "))
-    except ValueError:
-        limite = 1
-
-    # Filtramos o grafo antes do Dijkstra agir
-    graph = filter_secure_graph(graph, limite)
+    opcao = input("Escolha: ")
     
-    # O Dijkstra tentará encontrar o caminho mais rápido dentro das opções seguras
-    result = plan_trip(graph, start, end, criterion="time")
-    
-    if result["total_time"] == float("inf") or not result["path"]:
-        print(f"\n❌ Erro: Não existe um caminho seguro o suficiente para o nível {limite}.")
+    # Se escolher confiabilidade, o planejador deve usar o peso logarítmico
+    if opcao == "2":
+        for edges in graph.values():
+            for edge in edges:
+                edge.weight = edge.reliability_weight
+        criterio = "reliability"
     else:
-        print(f"\n✅ Rota encontrada com nível de segurança >= {limite}:")
-        format_route(result)
+        criterio = "time"
+
+    result = plan_trip(graph, start, end, criterion=criterio)
+    
+    format_route(result)
+    
+    # Cálculo da probabilidade final para exibição
+    if criterio == "reliability":
+        prob = math.exp(-result["total_time"]) * 100
+        print(f"✅ Probabilidade de sucesso: {prob:.2f}%")
 
 if __name__ == "__main__":
     main()
